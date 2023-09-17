@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/mall
+    driver-class-name: com.mysql.jdbc.Driver
+mybatis-plus:
+  #  xml映射文件位置
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    db-config:
+      #      主键自增
+      id-type: auto
+server:
+  port: 7000
