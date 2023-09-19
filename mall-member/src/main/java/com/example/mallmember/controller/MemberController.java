@@ -3,6 +3,8 @@ package com.example.mallmember.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.example.mallmember.feign.CouponFeignService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,10 +27,13 @@ import com.example.common.utils.R;
  * @date 2023-09-17 17:32:06
  */
 @RestController
-@RequestMapping("mallmember/member")
+@RequestMapping("/mallmember/member")
 public class MemberController {
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    CouponFeignService couponFeignService;
 
     /**
      * 列表
@@ -86,4 +91,10 @@ public class MemberController {
         return R.ok();
     }
 
+    @RequestMapping("/coupons")
+    public R coupons() {
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setNickname("张三");
+        return R.ok().put("member", memberEntity).put("coupons", couponFeignService.membercoupons());
+    }
 }

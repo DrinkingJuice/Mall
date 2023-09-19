@@ -18,7 +18,6 @@ import com.example.common.utils.R;
 
 
 /**
- * ??Ա??¼??¼
  *
  * @author juice
  * @email zhouyingfan@gmail.com

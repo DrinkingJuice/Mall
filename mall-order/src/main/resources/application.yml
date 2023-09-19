@@ -1,11 +1,17 @@
 server:
-  port: 9000
+  port: 9001
 spring:
   datasource:
     username: root
     password: 123456
     url: jdbc:mysql://localhost:3306/mall
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: mall-order
 mybatis-plus:
   #  xml映射文件位置
   mapper-locations: classpath:/mapper/**/*.xml
