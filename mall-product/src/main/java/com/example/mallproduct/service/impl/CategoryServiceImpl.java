@@ -1,7 +1,11 @@
 package com.example.mallproduct.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,4 +30,37 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return new PageUtils(page);
     }
 
+    @Override
+    public List<CategoryEntity> listWithTree() {
+        //查出所有分类
+        List<CategoryEntity> entities = baseMapper.selectList(null);
+        //组装成所有分类的树形结构
+        //1.找出父id为0的分类，也就是一级分类
+        List<CategoryEntity> level1Menu = entities.stream()
+                .filter(categoryEntity -> categoryEntity.getParentCid() == 0)
+                .map(meun -> {
+                    meun.setChildren(getChildren(meun, entities));
+                    return meun;
+                }) //递归找子菜单
+                .sorted((menu1, menu2) -> {
+                    return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
+                }) //排序
+                .toList();
+        return level1Menu;
+    }
+
+    private List<CategoryEntity> getChildren(CategoryEntity categoryEntity, List<CategoryEntity> list)
+    {
+        List<CategoryEntity> children = list.stream().filter((categoryEntity1) -> {
+            return categoryEntity1.getParentCid() == categoryEntity.getCatId(); //找到当前节点的子节点
+        })
+                .map(categoryEntity1 -> {
+            categoryEntity1.setChildren(getChildren(categoryEntity1, list));
+            return categoryEntity1; //找子菜单
+                })
+                .sorted((menu1, menu2) -> {
+                    return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort()); //排序
+                }).toList();
+        return children;
+    }
 }
